@@ -13,32 +13,38 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
+
 
 import fobicx.composeapp.generated.resources.Res
 import fobicx.composeapp.generated.resources.compose_multiplatform
 
 @Composable
-@Preview
 fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
+    var selectedItem by remember { mutableIntStateOf(0) }
+
+    Scaffold(
+        bottomBar = {
+            BottomNavBar(
+                selectedItem = selectedItem,
+                onItemSelected = { selectedItem = it },
+                onPostClick = { /* TODO: Handle Post */ }
+            )
+        },
+        content = { padding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "Selected: ${when (selectedItem) {
+                    0 -> "Home"
+                    1 -> "Materials"
+                    2 -> "Stock"
+                    3 -> "Me"
+                    else -> "Unknown"
+                }}")
             }
         }
-    }
-}
+    )
+            }
