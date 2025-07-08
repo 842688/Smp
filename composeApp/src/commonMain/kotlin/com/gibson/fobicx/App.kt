@@ -3,6 +3,7 @@ package com.gibson.fobicx
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import com.gibson.fobicx.screens.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -41,27 +42,3 @@ fun App() {
     }
 }
 
-@Composable
-fun HomeScreen() {
-    Text("🏠 Home", fontSize = 20.sp)
-}
-
-@Composable
-fun MaterialsScreen() {
-    Text("📦 Materials", fontSize = 20.sp)
-}
-
-@Composable
-fun PostScreen() {
-    Text("➕ Post", fontSize = 20.sp)
-}
-
-@Composable
-fun StockScreen() {
-    Text("📋 Stock", fontSize = 20.sp)
-}
-
-@Composable
-fun ProfileScreen() {
-    Text("👤 Me", fontSize = 20.sp)
-}
