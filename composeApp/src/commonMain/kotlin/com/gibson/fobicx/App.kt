@@ -1,44 +1,129 @@
-package com.gibson.fobicx
+package com.gibson.fobicx.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.gibson.fobicx.navigation.Screen
-import com.gibson.fobicx.screens.*
-import com.gibson.fobicx.ui.components.BottomNavBar
-import com.gibson.fobicx.ui.theme.FobicxTheme
 
 @Composable
-fun App() {
-    FobicxTheme(useDarkTheme = true) {
-        var currentScreen by remember { mutableStateOf<Screen>(Screen.Home) }
+fun BottomNavBar(
+    currentRoute: String?,
+    onItemClick: (String) -> Unit,
+    maxWidth: Dp = 500.dp
+) {
+    val navItems = listOf(
+        NavItem(Screen.Home, Icons.Default.Home),
+        NavItem(Screen.Materials, Icons.Default.ShoppingCart),
+        NavItem(Screen.Stock, Icons.Default.List),
+        NavItem(Screen.Me, Icons.Default.Person)
+    )
 
-        Scaffold(
-            bottomBar = {
-                BottomNavBar(
-                    currentRoute = currentScreen.route,
-                    onItemClick = { selectedRoute ->
-                        currentScreen = Screen.allScreens.find { it.route == selectedRoute } ?: Screen.Home
-                    }
-                )
-            }
-        ) { padding ->
-            Box(
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(modifier = Modifier.widthIn(max = maxWidth)) {
+            Row(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .height(70.dp)
+                    .clip(RoundedCornerShape(30.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                when (currentScreen) {
-                    is Screen.Home -> HomeScreen()
-                    is Screen.Materials -> MarketScreen()
-                    is Screen.Post -> PostScreen()
-                    is Screen.Stock -> StockScreen()
-                    is Screen.Me -> ProfileScreen()
+                navItems.chunked(2).first().forEach { item ->
+                    val isSelected = currentRoute == item.screen.route
+
+                    Column(
+                        modifier = Modifier
+                            .clickable { onItemClick(item.screen.route) }
+                            .padding(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = item.screen.route,
+                            tint = if (isSelected)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            text = item.screen.route,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (isSelected)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
+
+                // Add space for center FAB
+                Spacer(modifier = Modifier.width(48.dp))
+
+                navItems.chunked(2).last().forEach { item ->
+                    val isSelected = currentRoute == item.screen.route
+
+                    Column(
+                        modifier = Modifier
+                            .clickable { onItemClick(item.screen.route) }
+                            .padding(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = item.screen.route,
+                            tint = if (isSelected)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            text = item.screen.route,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (isSelected)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
+
+            FloatingActionButton(
+                onClick = { onItemClick(Screen.Post.route) },
+                shape = CircleShape,
+                containerColor = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(64.dp)
+                    .align(Alignment.Center)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Post",
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
     }
 }
+
+data class NavItem(val screen: Screen, val icon: ImageVector)
