@@ -1,43 +1,46 @@
 package com.gibson.fobicx
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.gibson.fobicx.navigation.Screen
+import androidx.compose.material3.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.navigation.compose.NavHost
+import org.jetbrains.compose.navigation.compose.composable
+import org.jetbrains.compose.navigation.compose.rememberNavController
 import com.gibson.fobicx.screens.*
 import com.gibson.fobicx.ui.components.BottomNavBar
-import com.gibson.fobicx.ui.theme.FobicxTheme
 
 @Composable
 fun App() {
-    FobicxTheme(useDarkTheme = true) {
-        var currentScreen by remember { mutableStateOf<Screen>(Screen.Home) }
+    val navController = rememberNavController()
+    val currentRoute by remember {
+        derivedStateOf { navController.currentBackStackEntry?.destination?.route ?: "home" }
+    }
 
+    MaterialTheme {
         Scaffold(
             bottomBar = {
                 BottomNavBar(
-                    currentRoute = currentScreen.route,
-                    onItemClick = { selectedRoute ->
-                        currentScreen = Screen.allScreens.find { it.route == selectedRoute } ?: Screen.Home
+                    currentRoute = currentRoute,
+                    onItemClick = { route ->
+                        if (route != currentRoute) {
+                            navController.navigate(route)
+                        }
                     }
                 )
             }
-        ) { padding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentAlignment = Alignment.Center
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = "home",
+                modifier = Modifier.padding(innerPadding)
             ) {
-                when (currentScreen) {
-                    is Screen.Home -> HomeScreen()
-                    is Screen.Materials -> MarketScreen()
-                    is Screen.Post -> PostScreen()
-                    is Screen.Stock -> StockScreen()
-                    is Screen.Me -> ProfileScreen()
-                }
+                composable("home") { HomeScreen() }
+                composable("market") { MarketScreen() }
+                composable("post") { PostScreen() }
+                composable("stock") { StockScreen() }
+                composable("me") { ProfileScreen() }
             }
         }
     }
