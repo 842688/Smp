@@ -7,16 +7,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gibson.fobicx.navigation.Screen
+import com.gibson.fobicx.ui.components.BottomNavBar
 
 @Composable
 fun App() {
-    var selectedTab by remember { mutableStateOf("Home") }
+    var currentScreen by remember { mutableStateOf<Screen>(Screen.Home) }
 
     Scaffold(
         bottomBar = {
-            BottomNavigationBar(
-                selected = selectedTab,
-                onSelect = { selectedTab = it }
+            BottomNavBar(
+                currentRoute = currentScreen.route,
+                onItemClick = { selectedRoute ->
+                    currentScreen = Screen.allScreens.first { it.route == selectedRoute }
+                }
             )
         }
     ) { padding ->
@@ -26,12 +30,12 @@ fun App() {
                 .padding(padding),
             contentAlignment = Alignment.Center
         ) {
-            when (selectedTab) {
-                "Home" -> HomeScreen()
-                "Materials" -> MaterialsScreen()
-                "Post" -> PostScreen()
-                "Stock" -> StockScreen()
-                "Me" -> ProfileScreen()
+            when (currentScreen) {
+                is Screen.Home -> HomeScreen()
+                is Screen.Materials -> MaterialsScreen()
+                is Screen.Post -> PostScreen()
+                is Screen.Stock -> StockScreen()
+                is Screen.Me -> ProfileScreen()
             }
         }
     }
@@ -39,45 +43,25 @@ fun App() {
 
 @Composable
 fun HomeScreen() {
-    Text(
-        text = "Home Screen",
-        fontSize = 20.sp,
-        style = MaterialTheme.typography.bodyLarge
-    )
+    Text("🏠 Home", fontSize = 20.sp)
 }
 
 @Composable
 fun MaterialsScreen() {
-    Text(
-        text = "Materials Screen",
-        fontSize = 20.sp,
-        style = MaterialTheme.typography.bodyLarge
-    )
+    Text("📦 Materials", fontSize = 20.sp)
 }
 
 @Composable
 fun PostScreen() {
-    Text(
-        text = "Post Screen",
-        fontSize = 20.sp,
-        style = MaterialTheme.typography.bodyLarge
-    )
+    Text("➕ Post", fontSize = 20.sp)
 }
 
 @Composable
 fun StockScreen() {
-    Text(
-        text = "Stock Screen",
-        fontSize = 20.sp,
-        style = MaterialTheme.typography.bodyLarge
-    )
+    Text("📋 Stock", fontSize = 20.sp)
 }
 
 @Composable
 fun ProfileScreen() {
-    Text(
-        text = "Profile Screen",
-        fontSize = 20.sp,
-        style = MaterialTheme.typography.bodyLarge
-    )
+    Text("👤 Me", fontSize = 20.sp)
 }
