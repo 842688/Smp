@@ -1,4 +1,4 @@
-package com.gibson.fobicx
+package com.gibson.fobicx.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -6,101 +6,103 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Calculator
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Inventory
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.Dp
+import com.gibson.fobicx.navigation.Screen
 
 @Composable
-fun BottomNavigationBar(
-    selected: String,
-    onSelect: (String) -> Unit,
-    modifier: Modifier = Modifier
+fun BottomNavBar(
+    currentRoute: String?,
+    onItemClick: (String) -> Unit,
+    maxWidth: Dp = 500.dp
 ) {
     val items = listOf(
-        NavItem("Home", Icons.Default.Home),
-        NavItem("Materials", Icons.Default.Calculator),
-        NavItem("Post", Icons.Default.Add),
-        NavItem("Stock", Icons.Default.Inventory),
-        NavItem("Me", Icons.Default.Person)
+        Screen.Home,
+        Screen.Materials,
+        Screen.Post,
+        Screen.Stock,
+        Screen.Me
     )
 
-    Surface(
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 6.dp,
-        shape = RoundedCornerShape(50),
-        modifier = modifier
+    val icons = listOf(
+        Icons.Default.Home,
+        Icons.Default.ShoppingCart,
+        Icons.Default.Add,
+        Icons.Default.List,
+        Icons.Default.Person
+    )
+
+    Box(
+        modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(12.dp),
+        contentAlignment = Alignment.Center
     ) {
-        Box(modifier = Modifier.padding(vertical = 8.dp)) {
+        Box(modifier = Modifier.widthIn(max = maxWidth)) {
             Row(
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(70.dp)
+                    .clip(RoundedCornerShape(30.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                items.forEachIndexed { index, item ->
-                    if (index == 2) {
-                        // Center FAB
-                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                            FloatingActionButton(
-                                onClick = { onSelect(item.title) },
-                                shape = CircleShape,
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier
-                                    .size(56.dp)
-                                    .offset(y = (-20).dp)
-                            ) {
-                                Icon(item.icon, contentDescription = item.title)
-                            }
-                        }
+                items.forEachIndexed { index, screen ->
+                    if (screen == Screen.Post) {
+                        Spacer(modifier = Modifier.width(48.dp))
                     } else {
-                        Box(modifier = Modifier.weight(1f)) {
-                            NavItemView(
-                                item = item,
-                                isSelected = selected == item.title,
-                                onClick = { onSelect(item.title) }
+                        val isSelected = currentRoute == screen.route
+
+                        Column(
+                            modifier = Modifier
+                                .clickable { onItemClick(screen.route) }
+                                .padding(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                imageVector = icons[index],
+                                contentDescription = screen.route,
+                                tint = if (isSelected)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Text(
+                                text = screen.route,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (isSelected)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
                 }
             }
+
+            FloatingActionButton(
+                onClick = { onItemClick(Screen.Post.route) },
+                shape = CircleShape,
+                containerColor = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(64.dp)
+                    .align(Alignment.Center)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Post",
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
         }
     }
 }
-
-@Composable
-fun NavItemView(item: NavItem, isSelected: Boolean, onClick: () -> Unit) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .clickable { onClick() }
-            .padding(vertical = 4.dp)
-    ) {
-        Icon(
-            imageVector = item.icon,
-            contentDescription = item.title,
-            tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-        )
-        Text(
-            text = item.title,
-            fontSize = 12.sp,
-            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-        )
-    }
-}
-
-data class NavItem(
-    val title: String,
-    val icon: ImageVector
-)
