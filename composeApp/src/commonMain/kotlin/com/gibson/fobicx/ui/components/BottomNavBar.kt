@@ -12,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.gibson.fobicx.navigation.Screen
 
 @Composable
@@ -22,20 +22,11 @@ fun BottomNavBar(
     onItemClick: (String) -> Unit,
     maxWidth: Dp = 500.dp
 ) {
-    val items = listOf(
-        Screen.Home,
-        Screen.Materials,
-        Screen.Post,
-        Screen.Stock,
-        Screen.Me
-    )
-
-    val icons = listOf(
-        Icons.Default.Home,
-        Icons.Default.ShoppingCart,
-        Icons.Default.Add,
-        Icons.Default.Checklist,
-        Icons.Default.Person
+    val navItems = listOf(
+        NavItem(Screen.Home, Icons.Default.Home),
+        NavItem(Screen.Materials, Icons.Default.ShoppingCart),
+        NavItem(Screen.Stock, Icons.Default.List),
+        NavItem(Screen.Me, Icons.Default.Person)
     )
 
     Box(
@@ -55,36 +46,64 @@ fun BottomNavBar(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                items.forEachIndexed { index, screen ->
-                    if (screen == Screen.Post) {
-                        Spacer(modifier = Modifier.width(48.dp))
-                    } else {
-                        val isSelected = currentRoute == screen.route
+                navItems.chunked(2).first().forEach { item ->
+                    val isSelected = currentRoute == item.screen.route
 
-                        Column(
-                            modifier = Modifier
-                                .clickable { onItemClick(screen.route) }
-                                .padding(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Icon(
-                                imageVector = icons[index],
-                                contentDescription = screen.route,
-                                tint = if (isSelected)
-                                    MaterialTheme.colorScheme.primary
-                                else
-                                    MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Text(
-                                text = screen.route,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = if (isSelected)
-                                    MaterialTheme.colorScheme.primary
-                                else
-                                    MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+                    Column(
+                        modifier = Modifier
+                            .clickable { onItemClick(item.screen.route) }
+                            .padding(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = item.screen.route,
+                            tint = if (isSelected)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            text = item.screen.route,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (isSelected)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+
+                // Add space for center FAB
+                Spacer(modifier = Modifier.width(48.dp))
+
+                navItems.chunked(2).last().forEach { item ->
+                    val isSelected = currentRoute == item.screen.route
+
+                    Column(
+                        modifier = Modifier
+                            .clickable { onItemClick(item.screen.route) }
+                            .padding(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = item.screen.route,
+                            tint = if (isSelected)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text(
+                            text = item.screen.route,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (isSelected)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                MaterialTheme.colorScheme.onSurface
+                        )
                     }
                 }
             }
@@ -106,3 +125,5 @@ fun BottomNavBar(
         }
     }
 }
+
+data class NavItem(val screen: Screen, val icon: ImageVector)
