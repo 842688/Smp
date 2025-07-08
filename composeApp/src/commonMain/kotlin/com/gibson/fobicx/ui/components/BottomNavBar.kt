@@ -34,7 +34,7 @@ fun BottomNavBar(
         Icons.Default.Home,
         Icons.Default.ShoppingCart,
         Icons.Default.Add,
-        Icons.Default.List,
+        Icons.Default.Checklist,
         Icons.Default.Person
     )
 
