@@ -1,44 +1,59 @@
 package com.gibson.fobicx
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import com.gibson.fobicx.screens.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.*
 import com.gibson.fobicx.navigation.Screen
+import com.gibson.fobicx.screens.*
 import com.gibson.fobicx.ui.components.BottomNavBar
+import com.gibson.fobicx.ui.theme.FobicxTheme
 
 @Composable
 fun App() {
-    var currentScreen by remember { mutableStateOf<Screen>(Screen.Home) }
+    FobicxTheme(useDarkTheme = true) {
+        val navController = rememberNavController()
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
 
-    Scaffold(
-        bottomBar = {
-            BottomNavBar(
-                currentRoute = currentScreen.route,
-                onItemClick = { selectedRoute ->
-                    currentScreen = Screen.allScreens.first { it.route == selectedRoute }
+        Scaffold(
+            bottomBar = {
+                BottomNavBar(
+                    currentRoute = currentRoute,
+                    onItemClick = { route ->
+                        if (route != currentRoute) {
+                            navController.navigate(route) {
+                                launchSingleTop = true
+                                restoreState = true
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                            }
+                        }
+                    }
+                )
+            }
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Home.route,
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                composable(Screen.Home.route) { HomeScreen() }
+                composable(Screen.Materials.route) { MarketScreen() }
+                composable(Screen.Post.route) { PostScreen() }
+                composable(Screen.Stock.route) { StockScreen() }
+                composable(Screen.Me.route) {
+                    ProfileScreen(
+                        onAccountClick = {
+                            navController.navigate("account_details")
+                        },
+                        navController = navController
+                    )
                 }
-            )
-        }
-    ) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            contentAlignment = Alignment.Center
-        ) {
-            when (currentScreen) {
-                is Screen.Home -> HomeScreen()
-                is Screen.Materials -> MaterialsScreen()
-                is Screen.Post -> PostScreen()
-                is Screen.Stock -> StockScreen()
-                is Screen.Me -> ProfileScreen()
             }
         }
     }
 }
-
