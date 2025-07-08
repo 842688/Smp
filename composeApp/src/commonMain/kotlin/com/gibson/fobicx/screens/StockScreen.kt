@@ -1,4 +1,4 @@
-package com.gibson.fobicx.ui.screens
+package com.gibson.fobicx.screens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
