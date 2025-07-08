@@ -62,6 +62,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(compose.runtime)
+            implementation("androidx.navigation:navigation-compose:2.9.1")
             implementation(compose.foundation)
             implementation(compose.materialIconsExtended)
             implementation(compose.material3)

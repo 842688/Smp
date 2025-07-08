@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import com.gibson.fobicx.navigation.Screen
 import com.gibson.fobicx.screens.*
@@ -42,16 +41,12 @@ fun App() {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(Screen.Home.route) { HomeScreen() }
-                composable(Screen.Materials.route) { MarketScreen() }
+                composable(Screen.Materials.route) { MaterialsScreen() }
                 composable(Screen.Post.route) { PostScreen() }
                 composable(Screen.Stock.route) { StockScreen() }
                 composable(Screen.Me.route) {
-                    ProfileScreen(
-                        onAccountClick = {
-                            navController.navigate("account_details")
-                        },
-                        navController = navController
-                    )
+                    ProfileScreen()
+
                 }
             }
         }
