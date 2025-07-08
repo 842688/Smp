@@ -12,7 +12,7 @@ import com.gibson.fobicx.ui.theme.FobicxTheme
 
 @Composable
 fun App() {
-    FobicxTheme(useDarkTheme = true) {
+    FobicxTheme {
         val navController = rememberNavController()
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
