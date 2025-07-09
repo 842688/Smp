@@ -59,10 +59,11 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
-            implementation("androidx.navigation:navigation-compose:2.9.1")
+
             implementation(compose.foundation)
             implementation(compose.materialIconsExtended)
             implementation(compose.material3)

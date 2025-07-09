@@ -17,7 +17,7 @@ import com.gibson.fobicx.navigation.Screen
 @Composable
 actual fun BottomNavBar(
     currentRoute: String?,
-    onItemClick: (String) -> Unit
+   onItemClick: (String) -> Unit
 ) {
     val icons = listOf(
         Icons.Default.Home,

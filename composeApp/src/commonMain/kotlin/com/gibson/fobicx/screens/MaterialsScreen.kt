@@ -7,6 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun MaterialsScreen() {
+fun MarketScreen() {
     Text("Materials", modifier = Modifier.padding(16.dp))
 }
