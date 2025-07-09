@@ -60,6 +60,23 @@ kotlin {
         
         androidMain.dependencies {
             implementation(compose.preview)
+    implementation("androidx.core:core-ktx:1.16.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.6")
+    implementation("androidx.compose.ui:ui:1.8.2")
+    implementation("androidx.compose.material:material-icons-extended-android:1.7.8")
+    implementation("com.google.firebase:firebase-auth:23.2.1")
+    implementation("androidx.compose.material3:material3:1.3.2")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    findKaptConfiguration("com.github.bumptech.glide:compiler:1.0.0-beta01")
+    implementation("androidx.navigation:navigation-compose:2.9.0")
+    implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.34.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1") // for ViewModel
+
+    // Firebase Auth
+    implementation("com.google.firebase:firebase-firestore-ktx:25.1.4")
+    implementation("com.google.firebase:firebase-auth-ktx:23.2.1")
+    implementation("com.google.firebase:firebase-analytics-ktx:22.4.0")
 
             implementation(libs.androidx.activity.compose)
 
