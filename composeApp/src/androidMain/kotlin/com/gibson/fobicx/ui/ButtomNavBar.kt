@@ -1,5 +1,6 @@
 package com.gibson.fobicx.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -50,7 +51,7 @@ actual fun BottomNavBar(
                         Spacer(modifier = Modifier.width(48.dp))
                     } else {
                         val icon = icons.getOrNull(index) ?: Icons.Default.Help
-                        val isSelected = currentRoute == screen.route
+                        val isSelected = currentRoute?.equals(screen.route) == true
 
                         Column(
                             modifier = Modifier
