@@ -17,8 +17,9 @@ import com.gibson.fobicx.navigation.Screen
 @Composable
 actual fun BottomNavBar(
     currentRoute: String?,
-   onItemClick: (String) -> Unit
+    onItemClick: (String) -> Unit
 ) {
+    val screens = Screen.allScreens
     val icons = listOf(
         Icons.Default.Home,
         Icons.Default.ShoppingCart,
@@ -26,8 +27,6 @@ actual fun BottomNavBar(
         Icons.Default.List,
         Icons.Default.Person
     )
-
-    val screens = Screen.allScreens
 
     Box(
         modifier = Modifier
@@ -50,6 +49,7 @@ actual fun BottomNavBar(
                     if (screen == Screen.Post) {
                         Spacer(modifier = Modifier.width(48.dp))
                     } else {
+                        val icon = icons.getOrNull(index) ?: Icons.Default.Help
                         val isSelected = currentRoute == screen.route
 
                         Column(
@@ -59,7 +59,7 @@ actual fun BottomNavBar(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Icon(
-                                imageVector = icons[index],
+                                imageVector = icon,
                                 contentDescription = screen.route,
                                 tint = if (isSelected)
                                     MaterialTheme.colorScheme.primary
