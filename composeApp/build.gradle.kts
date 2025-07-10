@@ -67,7 +67,7 @@ kotlin {
     implementation("com.google.firebase:firebase-auth:23.2.1")
     implementation("androidx.compose.material3:material3:1.3.2")
     implementation("com.github.bumptech.glide:glide:4.16.0")
-    findKaptConfiguration("com.github.bumptech.glide:compiler:1.0.0-beta01")
+//    findKaptConfiguration("com.github.bumptech.glide:compiler:1.0.0-beta01")
     implementation("androidx.navigation:navigation-compose:2.9.0")
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
     implementation("com.google.accompanist:accompanist-navigation-animation:0.34.0")

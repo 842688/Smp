@@ -9,8 +9,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -89,7 +93,7 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Column {
-                    Text(text = userName, color = Color.White, fontSize = MaterialTheme.typography.h6.fontSize)
+                    Text(text = userName, color = Color.White, fontSize = MaterialTheme.typography.titleLarge.fontSize)
                     Text(text = userEmail, color = Color.Gray)
                 }
             }
@@ -107,7 +111,7 @@ fun ProfileScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column {
-                        Text("Free", color = Color.White, style = MaterialTheme.typography.body1)
+                        Text("Free", color = Color.White, style = MaterialTheme.typography.bodyLarge)
                         Text("Credits", color = Color.Gray)
                         Text("0 ★", color = Color.White)
                         Text("Daily credits refresh at 01:00", color = Color.Gray, fontSize = 12.sp)
