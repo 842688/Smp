@@ -1,42 +1,42 @@
 {
   "project_info": {
-    "project_number": "833897904391",
-    "firebase_url": "https://fabicx-default-rtdb.firebaseio.com",
-    "project_id": "fabicx",
-    "storage_bucket": "fabicx.firebasestorage.app"
+    "project_number": "927198205508",
+    "firebase_url": "https://fabicx-backdata-default-rtdb.firebaseio.com",
+    "project_id": "fabicx-backdata",
+    "storage_bucket": "fabicx-backdata.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:833897904391:android:87f4bcf43243494d70eda2",
+        "mobilesdk_app_id": "1:927198205508:android:4a788d5933533ae17b4e11",
         "android_client_info": {
           "package_name": "com.gibson.fobicx"
         }
       },
       "oauth_client": [
         {
-          "client_id": "833897904391-s275sabvp9h5ob3fj2dijc3au3rt5uk9.apps.googleusercontent.com",
+          "client_id": "927198205508-p847ssb0a5fnicuum9nbhk5qlcr631ni.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.gibson.fobicx",
-            "certificate_hash": "f89e497ee468ccc91f67d7eb72fb79969dee9796"
+            "certificate_hash": "6ed537607726841d4d39fddac468a019e5701731"
           }
         },
         {
-          "client_id": "833897904391-vqt69eii51s2sr20jc4l1nso1ao51kb8.apps.googleusercontent.com",
+          "client_id": "927198205508-jlr3umnhkuq5ced0mo1ac4tq2e4knklk.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBGGgTkHsAqTc6mgn0XI8keuiYubGQX_YM"
+          "current_key": "AIzaSyAt5jiE7CpA-9LcEwBAivz1NSCYgXQA8rk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "833897904391-vqt69eii51s2sr20jc4l1nso1ao51kb8.apps.googleusercontent.com",
+              "client_id": "927198205508-jlr3umnhkuq5ced0mo1ac4tq2e4knklk.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
@@ -46,4 +46,4 @@
     }
   ],
   "configuration_version": "1"
-        }
+}
