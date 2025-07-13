@@ -1,39 +1,57 @@
 package com.gibson.fobicx.ui.screens.auth
 
+
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.gibson.fobicx.viewmodel.AuthViewModel
-import com.google.firebase.Timestamp
+import coil.compose.rememberAsyncImagePainter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.Timestamp
 
 @Composable
 fun AccountSetupScreen(
     navController: NavController,
-    authViewModel: AuthViewModel = viewModel(),
     onSkip: () -> Unit,
     onSave: () -> Unit
 ) {
     val context = LocalContext.current
     val db = FirebaseFirestore.getInstance()
+    val storage = FirebaseStorage.getInstance()
     val currentUser = FirebaseAuth.getInstance().currentUser
+    val uid = currentUser?.uid ?: return
 
     var fullName by remember { mutableStateOf("") }
     var userName by remember { mutableStateOf("") }
     var dob by remember { mutableStateOf("") }
     var accountType by remember { mutableStateOf("") }
     var customAccountType by remember { mutableStateOf("") }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var imageUrl by remember { mutableStateOf("") }
 
     val accountTypes = listOf("Personal", "Business", "Organization", "Other")
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            imageUri = uri
+        }
+    )
 
     Column(
         modifier = Modifier
@@ -42,6 +60,26 @@ fun AccountSetupScreen(
         verticalArrangement = Arrangement.Top
     ) {
         Text("Set Up Your Account", style = MaterialTheme.typography.headlineMedium)
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Box(
+            modifier = Modifier
+                .size(100.dp)
+                .align(Alignment.CenterHorizontally)
+                .clickable { imagePickerLauncher.launch("image/*") }
+        ) {
+            if (imageUri != null) {
+                Image(
+                    painter = rememberAsyncImagePainter(imageUri),
+                    contentDescription = "Selected Image",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Text("Tap to select image", modifier = Modifier.align(Alignment.Center))
+            }
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
@@ -91,34 +129,69 @@ fun AccountSetupScreen(
             }
 
             Button(onClick = {
-                val uid = currentUser?.uid
-                if (uid != null) {
-                    val userDoc = db.collection("users").document(uid)
-
-                    val userData = hashMapOf(
-                        "uid" to uid,
-                        "fullName" to fullName,
-                        "userName" to userName,
-                        "dob" to dob,
-                        "email" to currentUser.email,
-                        "accountType" to if (accountType == "Other") customAccountType else accountType,
-                        "industry" to "",  // default for now
-                        "role" to "customer", // can be customized later
-                        "joinedAt" to Timestamp.now(),
-                        "profilePicture" to "https://via.placeholder.com/150"
-                    )
-
-                    userDoc.set(userData).addOnSuccessListener {
-                        Toast.makeText(context, "Account setup complete", Toast.LENGTH_SHORT).show()
-                        onSave()
-                    }.addOnFailureListener {
-                        Toast.makeText(context, "Failed to save account", Toast.LENGTH_SHORT).show()
-                    }
+                if (imageUri != null) {
+                    val ref = storage.reference.child("profile_pictures/$uid.jpg")
+                    ref.putFile(imageUri!!)
+                        .addOnSuccessListener {
+                            ref.downloadUrl.addOnSuccessListener { uri ->
+                                imageUrl = uri.toString()
+                                saveUserData(
+                                    uid = uid,
+                                    fullName = fullName,
+                                    userName = userName,
+                                    dob = dob,
+                                    email = currentUser.email ?: "",
+                                    accountType = if (accountType == "Other") customAccountType else accountType,
+                                    imageUrl = imageUrl,
+                                    context = context,
+                                    onSave = onSave
+                                )
+                            }
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    Toast.makeText(context, "Please select a profile image", Toast.LENGTH_SHORT).show()
                 }
             }) {
                 Text("Save")
             }
         }
+    }
+}
+
+private fun saveUserData(
+    uid: String,
+    fullName: String,
+    userName: String,
+    dob: String,
+    email: String,
+    accountType: String,
+    imageUrl: String,
+    context: android.content.Context,
+    onSave: () -> Unit
+) {
+    val userDoc = FirebaseFirestore.getInstance().collection("users").document(uid)
+
+    val userData = hashMapOf(
+        "uid" to uid,
+        "fullName" to fullName,
+        "userName" to userName,
+        "dob" to dob,
+        "email" to email,
+        "accountType" to accountType,
+        "industry" to "",
+        "role" to "customer",
+        "joinedAt" to Timestamp.now(),
+        "profilePicture" to imageUrl
+    )
+
+    userDoc.set(userData).addOnSuccessListener {
+        Toast.makeText(context, "Account setup complete", Toast.LENGTH_SHORT).show()
+        onSave()
+    }.addOnFailureListener {
+        Toast.makeText(context, "Failed to save account", Toast.LENGTH_SHORT).show()
     }
 }
 
