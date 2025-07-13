@@ -1,185 +1,164 @@
 package com.gibson.fobicx.ui.screens.pages
 
-import android.widget.ImageView
-import androidx.compose.ui.draw.clip
-import com.bumptech.glide.Glide
-import androidx.compose.runtime.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.gibson.fobicx.viewmodel.ProfileViewModel
+import coil.compose.AsyncImage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun ProfileScreen(
     navController: NavController,
-    onAccountClick: () -> Unit,
-    viewModel: ProfileViewModel= viewModel()
-
+    viewModel: ProfileViewModel = viewModel()
 ) {
-    var userName by remember { mutableStateOf("Loading...") }
-    var userEmail by remember { mutableStateOf("Loading...") }
+    var fullName by remember { mutableStateOf("Loading...") }
+    var email by remember { mutableStateOf("Loading...") }
     var avatarUrl by remember { mutableStateOf("https://via.placeholder.com/64") }
+    var role by remember { mutableStateOf("guest") }
+    var industry by remember { mutableStateOf("Unknown") }
     var isLoading by remember { mutableStateOf(true) }
 
-    // Fetch user info from Firebase
     LaunchedEffect(Unit) {
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
-            val uid = user.uid
-            FirebaseFirestore.getInstance().collection("users").document(uid)
+            FirebaseFirestore.getInstance().collection("users").document(user.uid)
                 .get()
                 .addOnSuccessListener { doc ->
-                    userName = doc.getString("fullName") ?: "No Name"
-                    userEmail = doc.getString("email") ?: "No Email"
+                    fullName = doc.getString("fullName") ?: "No Name"
+                    email = doc.getString("email") ?: "No Email"
                     avatarUrl = doc.getString("avatarUrl") ?: avatarUrl
+                    role = doc.getString("role") ?: "user"
+                    industry = doc.getString("industry") ?: "Unknown"
                     isLoading = false
                 }
                 .addOnFailureListener {
-                    userName = "Error"
-                    userEmail = "Failed to load"
+                    fullName = "Error"
+                    email = "Failed to load"
                     isLoading = false
                 }
         } else {
-            userName = "Guest"
-            userEmail = "Not logged in"
+            fullName = "Guest"
+            email = "Not logged in"
             isLoading = false
         }
     }
 
-    Column(
+    Surface(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
-            .padding(16.dp)
+            .padding(16.dp),
+        color = Color.Black
     ) {
         if (isLoading) {
-            CircularProgressIndicator(
-                color = Color.White,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 100.dp)
-            )
-        } else {
-            // Header
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 16.dp)
-            ) {
-                GlideImage(
-                    url = avatarUrl,
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape)
-                )
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Column {
-                    Text(text = userName, color = Color.White, fontSize = MaterialTheme.typography.titleLarge.fontSize)
-                    Text(text = userEmail, color = Color.Gray)
-                }
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Color.White)
             }
+        } else {
+            Column {
+                // Profile Header
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    AsyncImage(
+                        model = avatarUrl,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(72.dp)
+                            .clip(CircleShape)
+                    )
+                    Spacer(Modifier.width(16.dp))
+                    Column {
+                        Text(text = fullName, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        Text(text = email, color = Color.Gray, fontSize = 14.sp)
+                        Text(text = "Role: ${role.replaceFirstChar { it.uppercase() }}", color = Color.LightGray, fontSize = 12.sp)
+                        Text(text = "Industry: $industry", color = Color.LightGray, fontSize = 12.sp)
+                    }
+                }
 
-            // Plan Card
-            Card(
-                colors = CardDefaults.cardColors(containerColor = Color.DarkGray),
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+                Spacer(Modifier.height(24.dp))
+
+                // Quick Access by Role
+                Text("Quick Access", color = Color.Gray, fontSize = 12.sp)
+
+                when (role.lowercase()) {
+                    "fabricator" -> {
+                        ProfileButton("My Business") { /* navController.navigate(...) */ }
+                        ProfileButton("My Calculations") { /* navController.navigate(...) */ }
+                        ProfileButton("My Posts") { /* navController.navigate(...) */ }
+                    }
+                    "seller" -> {
+                        ProfileButton("My Store") { /* navController.navigate(...) */ }
+                        ProfileButton("My Products") { /* navController.navigate(...) */ }
+                        ProfileButton("My Orders") { /* navController.navigate(...) */ }
+                    }
+                    "customer" -> {
+                        ProfileButton("My Orders") { /* navController.navigate(...) */ }
+                        ProfileButton("Favorites") { /* navController.navigate(...) */ }
+                        ProfileButton("Following") { /* navController.navigate(...) */ }
+                    }
+                    else -> {
+                        ProfileButton("Explore") { /* navController.navigate(...) */ }
+                    }
+                }
+
+                Spacer(Modifier.height(24.dp))
+
+                // General Options
+                Text("General", color = Color.Gray, fontSize = 12.sp)
+                ProfileButton("Edit Profile") { /* navController.navigate("edit_profile") */ }
+                ProfileButton("Settings") { /* navController.navigate("settings") */ }
+
+                Spacer(Modifier.height(24.dp))
+
+                // Logout
                 Row(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .clickable {
+                            FirebaseAuth.getInstance().signOut()
+                            navController.navigate("login") {
+                                popUpTo(0)
+                            }
+                        }
+                        .padding(vertical = 16.dp)
                 ) {
-                    Column {
-                        Text("Free", color = Color.White, style = MaterialTheme.typography.bodyLarge)
-                        Text("Credits", color = Color.Gray)
-                        Text("0 ★", color = Color.White)
-                        Text("Daily credits refresh at 01:00", color = Color.Gray, fontSize = 12.sp)
-                    }
-                    Button(onClick = { /* Upgrade logic */ }) {
-                        Text("Upgrade")
-                    }
+                    Icon(
+                        imageVector = Icons.Default.ExitToApp,
+                        contentDescription = "Logout",
+                        tint = Color.Red
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Logout", color = Color.Red, fontSize = 16.sp)
                 }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Menu Sections
-            SettingsSection("Menus") {
-                SettingsItem("Share with a friend") {}
-                SettingsItem("Knowledge") {}
-                SettingsItem("Language", rightText = "English") {}
-            }
-
-            SettingsSection("General") {
-                SettingsItem("Account") {
-                    navController.navigate("account_details")
-                }
-                SettingsItem("Appearance", rightText = "Follow system") {}
-                SettingsItem("Clear cache", rightText = "2 MB") {}
-            }
-
-            SettingsSection("Information") {
-                SettingsItem("Rate this app") {}
-                SettingsItem("Contact us") {}
             }
         }
     }
 }
 
 @Composable
-fun GlideImage(url: String, modifier: Modifier = Modifier) {
-    AndroidView(
-        factory = { context ->
-            ImageView(context).apply {
-                scaleType = ImageView.ScaleType.CENTER_CROP
-                Glide.with(context).load(url).into(this)
-            }
-        },
-        modifier = modifier
-    )
-}
-
-@Composable
-fun SettingsSection(title: String, content: @Composable ColumnScope.() -> Unit) {
-    Column(modifier = Modifier.padding(vertical = 8.dp)) {
-        Text(text = title, color = Color.Gray, fontSize = 12.sp)
-        content()
-    }
-}
-
-@Composable
-fun SettingsItem(text: String, rightText: String? = null, onClick: () -> Unit) {
-    Row(
+fun ProfileButton(label: String, onClick: () -> Unit) {
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(vertical = 6.dp)
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = Color.DarkGray),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(2.dp)
     ) {
-        Text(text, color = Color.White)
-        rightText?.let {
-            Text(it, color = Color.Gray)
+        Box(modifier = Modifier.padding(16.dp)) {
+            Text(text = label, color = Color.White, fontSize = 16.sp)
         }
     }
 }
