@@ -17,11 +17,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
+import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.bumptech.glide.Glide
 
 @Composable
 fun AccountSetupScreen(
@@ -30,8 +30,8 @@ fun AccountSetupScreen(
     onSave: () -> Unit
 ) {
     val context = LocalContext.current
-    val db = FirebaseFirestore.getInstance()
     val storage = FirebaseStorage.getInstance()
+    val firestore = FirebaseFirestore.getInstance()
     val currentUser = FirebaseAuth.getInstance().currentUser
     val uid = currentUser?.uid ?: return
 
@@ -41,15 +41,13 @@ fun AccountSetupScreen(
     var accountType by remember { mutableStateOf("") }
     var customAccountType by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-    var imageUrl by remember { mutableStateOf("") }
+    var isUploading by remember { mutableStateOf(false) }
 
     val accountTypes = listOf("Personal", "Business", "Organization", "Other")
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
-        onResult = { uri ->
-            imageUri = uri
-        }
+        onResult = { uri -> imageUri = uri }
     )
 
     Column(
@@ -63,14 +61,14 @@ fun AccountSetupScreen(
 
         Box(
             modifier = Modifier
-                .size(100.dp)
+                .size(120.dp)
                 .align(Alignment.CenterHorizontally)
                 .clickable { imagePickerLauncher.launch("image/*") }
         ) {
             if (imageUri != null) {
                 GlideImage(uri = imageUri!!, modifier = Modifier.fillMaxSize())
             } else {
-                Text("Tap to select image", modifier = Modifier.align(Alignment.Center))
+                Text("Tap to select profile image", modifier = Modifier.align(Alignment.Center))
             }
         }
 
@@ -114,6 +112,10 @@ fun AccountSetupScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        if (isUploading) {
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -123,31 +125,46 @@ fun AccountSetupScreen(
             }
 
             Button(onClick = {
-                if (imageUri != null) {
-                    val ref = storage.reference.child("profile_pictures/$uid.jpg")
-                    ref.putFile(imageUri!!)
-                        .addOnSuccessListener {
-                            ref.downloadUrl.addOnSuccessListener { uri ->
-                                imageUrl = uri.toString()
-                                saveUserData(
-                                    uid = uid,
-                                    fullName = fullName,
-                                    userName = userName,
-                                    dob = dob,
-                                    email = currentUser.email ?: "",
-                                    accountType = if (accountType == "Other") customAccountType else accountType,
-                                    imageUrl = imageUrl,
-                                    context = context,
-                                    onSave = onSave
-                                )
-                            }
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
-                        }
-                } else {
-                    Toast.makeText(context, "Please select a profile image", Toast.LENGTH_SHORT).show()
+                if (imageUri == null) {
+                    Toast.makeText(context, "Please select an image", Toast.LENGTH_SHORT).show()
+                    return@Button
                 }
+
+                isUploading = true
+                val storageRef = storage.reference.child("profile_pictures/$uid.jpg")
+                storageRef.putFile(imageUri!!)
+                    .addOnSuccessListener {
+                        storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                            val userData = hashMapOf(
+                                "uid" to uid,
+                                "fullName" to fullName,
+                                "userName" to userName,
+                                "dob" to dob,
+                                "email" to currentUser.email,
+                                "accountType" to if (accountType == "Other") customAccountType else accountType,
+                                "industry" to "",
+                                "role" to "customer",
+                                "joinedAt" to Timestamp.now(),
+                                "profilePicture" to downloadUrl.toString()
+                            )
+
+                            firestore.collection("users").document(uid)
+                                .set(userData)
+                                .addOnSuccessListener {
+                                    isUploading = false
+                                    Toast.makeText(context, "Account setup complete", Toast.LENGTH_SHORT).show()
+                                    onSave()
+                                }
+                                .addOnFailureListener {
+                                    isUploading = false
+                                    Toast.makeText(context, "Failed to save account info", Toast.LENGTH_SHORT).show()
+                                }
+                        }
+                    }
+                    .addOnFailureListener {
+                        isUploading = false
+                        Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
+                    }
             }) {
                 Text("Save")
             }
@@ -167,40 +184,6 @@ fun GlideImage(uri: Uri, modifier: Modifier = Modifier) {
         },
         modifier = modifier
     )
-}
-
-private fun saveUserData(
-    uid: String,
-    fullName: String,
-    userName: String,
-    dob: String,
-    email: String,
-    accountType: String,
-    imageUrl: String,
-    context: android.content.Context,
-    onSave: () -> Unit
-) {
-    val userDoc = FirebaseFirestore.getInstance().collection("users").document(uid)
-
-    val userData = hashMapOf(
-        "uid" to uid,
-        "fullName" to fullName,
-        "userName" to userName,
-        "dob" to dob,
-        "email" to email,
-        "accountType" to accountType,
-        "industry" to "",
-        "role" to "customer",
-        "joinedAt" to Timestamp.now(),
-        "profilePicture" to imageUrl
-    )
-
-    userDoc.set(userData).addOnSuccessListener {
-        Toast.makeText(context, "Account setup complete", Toast.LENGTH_SHORT).show()
-        onSave()
-    }.addOnFailureListener {
-        Toast.makeText(context, "Failed to save account", Toast.LENGTH_SHORT).show()
-    }
 }
 
 @Composable
@@ -224,10 +207,7 @@ fun DropdownMenuBox(
                 }
             }
         )
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             options.forEach { option ->
                 DropdownMenuItem(
                     onClick = {
