@@ -14,6 +14,7 @@ import com.gibson.fobicx.navigation.Screen
 import com.gibson.fobicx.ui.components.BottomNavBar
 import com.gibson.fobicx.ui.screens.pages.*
 
+
 @Composable
 fun MainScreen(onLogout: () -> Unit) {
     val navController = rememberNavController()
@@ -48,14 +49,7 @@ fun MainScreen(onLogout: () -> Unit) {
             composable(Screen.Post.route) { PostScreen() }
             composable(Screen.Stock.route) { StockScreen() }
             composable(Screen.Me.route) {
-                ProfileScreen(
-                    onAccountClick = {
-                        navController.navigate("Routes.ACCOUNT_DETAILS")
-                    },
-                    navController = navController
-                    
-                    
-                )
+                ProfileScreen(navController)
             }
         }
     }
