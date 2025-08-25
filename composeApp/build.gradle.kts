@@ -66,7 +66,6 @@ kotlin {
     implementation("androidx.compose.material:material-icons-extended-android:1.7.8")
     implementation("androidx.compose.material3:material3:1.3.2")
     implementation("com.github.bumptech.glide:glide:4.16.0")
-            implementation("com.google.accompanist:accompanist-glide:0.28.0")
     implementation("androidx.navigation:navigation-compose:2.9.0")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.34.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1") // for ViewModel
