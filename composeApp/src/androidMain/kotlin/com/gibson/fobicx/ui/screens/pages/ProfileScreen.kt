@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
@@ -17,6 +18,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.gibson.fobicx.ui.screens.auth.GlideImage
 import com.bumptech.glide.Glide
+import androidx.compose.ui.viewinterop.AndroidView
+import android.widget.ImageView
 import com.gibson.fobicx.viewmodel.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -90,7 +93,6 @@ fun ProfileScreen(
     ) { imageView ->
         Glide.with(imageView.context)
             .load(avatarUrl)
-            .placeholder(R.drawable.placeholder) // optional
             .into(imageView)
     }
                     
