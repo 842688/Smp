@@ -74,13 +74,26 @@ fun ProfileScreen(
             Column {
                 // Profile Header
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    GlideImage(
-                        data = avatarUrl,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(72.dp)
-                            .clip(CircleShape)
-                    )
+    AndroidView(
+        factory = { context ->
+            ImageView(context).apply {
+                layoutParams = android.view.ViewGroup.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT
+                )
+                scaleType = ImageView.ScaleType.CENTER_CROP
+            }
+        },
+        modifier = Modifier
+            .size(72.dp)
+            .clip(CircleShape)
+    ) { imageView ->
+        Glide.with(imageView.context)
+            .load(avatarUrl)
+            .placeholder(R.drawable.placeholder) // optional
+            .into(imageView)
+    }
+                    
                     Spacer(Modifier.width(16.dp))
                     Column {
                         Text(text = fullName, color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold)
