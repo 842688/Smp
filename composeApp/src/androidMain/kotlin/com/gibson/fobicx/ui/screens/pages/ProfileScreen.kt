@@ -15,7 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
+import com.gibson.fobicx.ui.screens.auth.GlideImage
+import com.bumptech.glide.Glide
 import com.gibson.fobicx.viewmodel.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -73,8 +74,8 @@ fun ProfileScreen(
             Column {
                 // Profile Header
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    AsyncImage(
-                        model = avatarUrl,
+                    GlideImage(
+                        data = avatarUrl,
                         contentDescription = null,
                         modifier = Modifier
                             .size(72.dp)
