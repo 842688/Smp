@@ -1,3 +1,12 @@
 {
-    "j"
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch App on Emulator/Device",
+      "type": "android",
+      "request": "launch",
+      "mainClass": "",
+      "preLaunchTask": "Install on Emulator/Device"
+    }
+  ]
 }
