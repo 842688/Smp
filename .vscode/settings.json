@@ -1,3 +1,22 @@
 {
-    "java.home": ""
+  // Point VS Code to your JDK
+  "java.home": "/usr/lib/jvm/java-17-openjdk",
+
+  // Configure Java runtimes (optional but useful)
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-17",
+      "path": "/usr/lib/jvm/java-17-openjdk",
+      "default": true
+    }
+  ],
+
+  // Gradle settings
+  "java.import.gradle.enabled": true,
+  "java.import.gradle.wrapper.enabled": true,
+  "java.import.maven.enabled": false,
+
+  // Optional: format & linting
+  "editor.formatOnSave": true,
+  "files.autoSave": "afterDelay"
 }
