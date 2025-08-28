@@ -1,12 +1,12 @@
 {
   // Point VS Code to your JDK
-  "java.home": "/usr/lib/jvm/java-17-openjdk",
+  "java.home": "/usr/lib/jvm/java-17-openjdk-amd64",
 
   // Configure Java runtimes (optional but useful)
   "java.configuration.runtimes": [
     {
       "name": "JavaSE-17",
-      "path": "/usr/lib/jvm/java-17-openjdk",
+      "path": "/usr/lib/jvm/java-17-openjdk-amd64",
       "default": true
     }
   ],
