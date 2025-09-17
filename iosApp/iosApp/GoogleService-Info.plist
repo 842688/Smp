@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>833897904391-fpugn11asd2nin7k2kk6pcu57r27q520.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.833897904391-fpugn11asd2nin7k2kk6pcu57r27q520</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>833897904391-s275sabvp9h5ob3fj2dijc3au3rt5uk9.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAJlTDRVBaeumwHcshTZghp65S3kFi5tls</string>
+	<key>GCM_SENDER_ID</key>
+	<string>833897904391</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.gibsin.fobicx</string>
+	<key>PROJECT_ID</key>
+	<string>fabicx</string>
+	<key>STORAGE_BUCKET</key>
+	<string>fabicx.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:833897904391:ios:3460856a8f43840d70eda2</string>
+	<key>DATABASE_URL</key>
+	<string>https://fabicx-default-rtdb.firebaseio.com</string>
+	<key>ADMOB_APP_ID</key>
+	<string>ca-app-pub-8105096464664625~1442454772</string>
+</dict>
+</plist>
