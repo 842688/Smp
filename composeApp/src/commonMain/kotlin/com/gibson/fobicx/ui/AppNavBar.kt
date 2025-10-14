@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
  * - Mobile actuals should implement a bottom pill-style navigation.
  * - Desktop/Web actuals should implement a vertical side nav.
  */
+@Composable
 expect fun AppNavBar(
     currentRoute: String?,
     onItemClick: (route: String) -> Unit
