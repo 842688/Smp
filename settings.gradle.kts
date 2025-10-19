@@ -1,4 +1,4 @@
-rootProject.name = "Fobicx"
+rootProject.name = "Spica"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
