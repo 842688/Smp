@@ -97,11 +97,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.gibson.spica"
+    namespace = "com.gibson.fobicx"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.gibson.spica"
+        applicationId = "com.gibson.fobicx"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -142,11 +142,11 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "com.gibson.spica.MainKt"
+        mainClass = "com.gibson.fobicx.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.gibson.spica"
+            packageName = "com.gibson.fobicx"
             packageVersion = "1.0.0"
         }
     }
